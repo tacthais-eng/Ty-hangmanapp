@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IT Hangman</title>
+<meta name="theme-color" content="#14213d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="IT Hangman">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<script>if("serviceWorker" in navigator){addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script>
+
+</head>
+<body style="margin:0;background:#eef2f7;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)">
+
+<!-- ===== START: copy from here to END into a Squarespace Code Block ===== -->
+<section id="ith">
+<style>
+#ith{--ink:#14213d;--blue:#2f6fed;--amber:#f59e0b;--red:#e5484d;--green:#1a9e5c;--line:#d5dce8;
+ font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;color:var(--ink);max-width:720px;margin:0 auto;padding:16px;box-sizing:border-box}
+#ith *{box-sizing:border-box}
+#ith .card{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:18px;box-shadow:5px 5px 0 var(--ink)}
+#ith h2{margin:0 0 4px;font-size:1.5rem}
+#ith .sub{margin:0 0 14px;color:#4a5878;font-size:.95rem}
+#ith [hidden]{display:none!important}
+#ith .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+#ith .pill{border:2px solid var(--ink);border-radius:999px;padding:3px 12px;font-size:.85rem;font-weight:bold;background:#fff}
+#ith .pill.try{background:var(--amber)}
+#ith .pill.last{background:var(--red);color:#fff}
+#ith .stage{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+#ith svg.hm{width:150px;height:170px;flex:none;overflow:visible}
+#ith svg.hm .g{stroke:var(--ink);stroke-width:4;stroke-linecap:round;fill:none}
+#ith svg.hm .p{stroke:var(--red);stroke-width:5;stroke-linecap:round;fill:none;display:none}
+#ith svg.hm .p.on{display:inline}
+#ith svg.hm.shake{animation:ithshake .3s infinite;transform-origin:50% 0}
+@keyframes ithshake{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(-4px,2px) rotate(-3deg)}50%{transform:translate(4px,-2px) rotate(3deg)}75%{transform:translate(-3px,-2px) rotate(-2deg)}100%{transform:translate(0,0) rotate(0)}}
+#ith .info{flex:1;min-width:200px}
+#ith .hint{background:#e8f0ff;border-left:5px solid var(--blue);padding:8px 10px;border-radius:6px;margin:0 0 10px;font-size:.95rem}
+#ith .word{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+#ith .ch{width:30px;height:40px;border-bottom:4px solid var(--ink);display:grid;place-items:center;font-size:1.5rem;font-weight:bold}
+#ith .keys{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin-top:14px}
+#ith .keys button{font:inherit;font-weight:bold;padding:10px 0;border:2px solid var(--ink);border-radius:8px;background:#fff;color:var(--ink);cursor:pointer;min-height:40px}
+#ith .keys button:hover:not(:disabled){background:var(--blue);color:#fff}
+#ith button:focus-visible,#ith input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+#ith .keys button:disabled{cursor:default}
+#ith .keys button.ok{background:var(--green);color:#fff;border-color:var(--green)}
+#ith .keys button.no{background:#f3d3d4;color:#8a2a2e;border-color:var(--red);text-decoration:line-through}
+#ith .msg{min-height:3.2em;margin-top:14px;padding:10px 12px;border-radius:8px;background:#f4f6fa;font-size:.95rem}
+#ith .msg.win{background:#dcf5e7}
+#ith .msg.lose{background:#fbe3e4}
+#ith .msg.warn{background:#fff1cf;border:2px solid var(--amber);font-weight:bold}
+#ith .btn{font:inherit;font-weight:bold;border:2px solid var(--ink);border-radius:8px;padding:9px 16px;background:var(--blue);color:#fff;cursor:pointer;margin-top:10px}
+#ith .btn.red{background:var(--red)}
+#ith input.nm{font:inherit;width:100%;max-width:300px;padding:9px 12px;border:2px solid var(--ink);border-radius:8px;display:block;margin:8px 0}
+#ith .lb{margin:14px 0 0;padding:10px 14px;border:2px dashed var(--ink);border-radius:10px;background:#fffbea}
+#ith .lb b{display:block;margin-bottom:4px}
+#ith .lb ol{list-style:none;margin:0;padding:0}
+#ith .lb li{display:flex;justify-content:space-between;padding:2px 0}
+#ith #ith-fx{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9998}
+#ith #ith-cheer{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+#ith .cheer{position:absolute;font-size:2.2rem;font-weight:900;color:#fff;-webkit-text-stroke:2px var(--ink);text-shadow:3px 3px 0 var(--ink);animation:ithpop 2.4s ease-out forwards;white-space:nowrap}
+@keyframes ithpop{0%{transform:scale(.2) rotate(-8deg);opacity:0}15%{transform:scale(1.25) rotate(4deg);opacity:1}30%{transform:scale(1) rotate(-3deg)}100%{transform:translateY(-70px) scale(1);opacity:0}}
+#ith .wrap{position:relative;width:150px;height:170px;flex:none}
+#ith .wrap svg.hm{display:block}
+#ith #ith-actor{position:absolute;left:0;top:0;width:150px;height:170px;pointer-events:none;z-index:5}
+#ith #ith-actor svg{width:150px;height:170px;overflow:visible;display:block}
+#ith #ith-actor .f{stroke:#e5484d;stroke-width:5;stroke-linecap:round;fill:none}
+#ith #ith-actor .f.head{fill:#fff}
+#ith #ith-actor .smile,#ith #ith-actor .cry,#ith #ith-actor .up{display:none}
+#ith #ith-actor.win .smile,#ith #ith-actor.win .up{display:inline}
+#ith #ith-actor.win .down{display:none}
+#ith #ith-actor.dead .cry{display:inline}
+#ith #ith-actor .tear{fill:#4aa8ff;stroke:none;opacity:0;animation:ithtear .7s ease-in 1.7s infinite}
+@keyframes ithtear{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(20px,0)}}
+#ith #ith-actor.dead .hd{transform-box:fill-box;transform-origin:center;animation:ithsob .16s ease-in-out 1.7s infinite alternate}
+@keyframes ithsob{from{transform:translate(0,0)}to{transform:translate(2px,3px)}}
+#ith #ith-actor.win{animation:ithwalkoff 5s ease-in-out forwards}
+@keyframes ithwalkoff{0%{transform:translate(0,0)}12%{transform:translate(0,25px)}22%{transform:translate(0,25px)}100%{transform:translate(120vw,25px)}}
+#ith #ith-actor.win .leg{transform-origin:105px 105px;animation:ithleg .35s ease-in-out 1.1s infinite alternate}
+#ith #ith-actor.win .leg.b{animation-direction:alternate-reverse}
+@keyframes ithleg{from{transform:rotate(-25deg)}to{transform:rotate(25deg)}}
+#ith #ith-actor.win .arm{transform-origin:105px 72px;animation:itharm .25s ease-in-out infinite alternate}
+#ith #ith-actor.win .arm.b{animation-direction:alternate-reverse}
+@keyframes itharm{from{transform:rotate(-30deg)}to{transform:rotate(30deg)}}
+#ith #ith-actor.win svg{transform-origin:105px 160px;animation:ithdance .3s ease-in-out infinite alternate}
+@keyframes ithdance{from{transform:translateY(0) rotate(-7deg)}to{transform:translateY(-9px) rotate(7deg)}}
+#ith #ith-actor.dead{transform-origin:105px 32px;animation:ithdead 1.6s ease-in forwards}
+@keyframes ithdead{0%{transform:rotate(0)}15%{transform:rotate(-14deg)}30%{transform:rotate(12deg)}45%{transform:rotate(-8deg)}60%{transform:rotate(5deg)}68%{transform:rotate(0) translateY(0)}80%{transform:rotate(0) translateY(25px)}100%{transform:rotate(0) translateY(25px)}}
+#ith #ith-actor.dead svg{transform-origin:105px 135px;animation:ithfall .5s ease-in 1.2s forwards}
+@keyframes ithfall{from{transform:rotate(0)}to{transform:rotate(90deg)}}
+@media(prefers-reduced-motion:reduce){#ith #ith-actor,#ith #ith-actor svg,#ith #ith-actor .leg,#ith #ith-actor .arm,#ith #ith-actor .hd{animation:none!important}#ith #ith-actor .tear{animation:none!important;opacity:1}}
+@media(max-width:480px){#ith .keys{grid-template-columns:repeat(7,1fr)}#ith .ch{width:26px;height:36px;font-size:1.2rem}}
+@media(prefers-reduced-motion:reduce){#ith svg.hm.shake{animation:none}}
+</style>
+
+<div class="card">
+  <h2>IT Hangman</h2>
+  <p class="sub">Guess the IT term. 2 chances per word. Your best score can make the Top 3.</p>
+
+  <div id="ith-login">
+    <label for="ith-name"><b>Enter your name to play</b></label>
+    <input class="nm" id="ith-name" maxlength="14" placeholder="Your name" autocomplete="off">
+    <button class="btn" id="ith-start" type="button">Start game</button>
+  </div>
+
+  <div id="ith-game" hidden>
+    <div class="bar">
+      <span class="pill" id="ith-who"></span>
+      <span class="pill try" id="ith-try"></span>
+      <span class="pill" id="ith-miss"></span>
+      <span class="pill" id="ith-score"></span>
+    </div>
+    <div class="stage">
+      <div class="wrap"><svg class="hm" id="ith-hm" viewBox="0 0 150 170" aria-hidden="true">
+        <path class="g" d="M15 160H100M35 160V12H105V32"/>
+        <circle class="p" cx="105" cy="46" r="14"/>
+        <path class="p" d="M105 60V105"/>
+        <path class="p" d="M105 72L86 92"/>
+        <path class="p" d="M105 72L124 92"/>
+        <path class="p" d="M105 105L88 135"/>
+        <path class="p" d="M105 105L122 135"/>
+      </svg>
+      <div id="ith-actor" hidden><svg viewBox="0 0 150 170">
+        <g class="hd"><circle class="f head" cx="105" cy="46" r="14"/>
+        <path class="smile" d="M98 50Q105 58 112 50" stroke="#14213d" stroke-width="2.5" fill="none"/>
+        <g class="cry" stroke="#14213d" stroke-width="2.5" fill="none" stroke-linecap="round"><path d="M95 35L102 38M115 35L108 38M96 43Q100 47 104 43M106 43Q110 47 114 43M98 56Q105 50 112 56"/><circle class="tear" cx="100" cy="47" r="2.6"/><circle class="tear" cx="110" cy="47" r="2.6"/></g></g>
+        <path class="f" d="M105 60V105"/>
+        <path class="f down" d="M105 72L86 92M105 72L124 92"/>
+        <path class="f up arm" d="M105 72L86 52"/><path class="f up arm b" d="M105 72L124 52"/>
+        <path class="f leg" d="M105 105L88 135"/><path class="f leg b" d="M105 105L122 135"/>
+      </svg></div></div>
+      <div class="info">
+        <p class="hint" id="ith-hint"></p>
+        <div class="word" id="ith-word" aria-live="polite"></div>
+      </div>
+    </div>
+    <div class="keys" id="ith-keys"></div>
+    <div class="msg" id="ith-msg" aria-live="polite"></div>
+    <button class="btn" id="ith-next" type="button" hidden></button>
+    <button class="btn" id="ith-swap" type="button" style="background:#fff;color:#14213d">Change player</button>
+  </div>
+
+  <div class="lb"><b>Top 3 players</b><ol id="ith-lb"></ol></div>
+  <canvas id="ith-fx"></canvas>
+  <div id="ith-cheer"></div>
+</div>
+
+<script>
+(function(){
+  // [word, hint, meaning] separated by |
+  var RAW=("FIREWALL|Filters network traffic|Blocks or allows traffic using security rules.\nPHISHING|Fake emails fishing for passwords|Scam messages posing as trusted senders.\nROUTER|Sends packets between networks|Forwards data between networks.\nMALWARE|Software built to harm|Umbrella term for viruses, spyware and ransomware.\nBANDWIDTH|How much data a link can carry|Maximum data a connection transfers per second.\nENCRYPTION|Scrambles data for key holders|Turns data into code only a key unlocks.\nPASSWORD|Keep it long and unique|A secret string that proves who you are.\nBACKUP|Safety net for lost files|A separate copy used to restore lost data.\nBROWSER|Chrome, Edge, Firefox|An app for viewing websites.\nDATABASE|Organised data apps query|Structured data store that software can search.\nSERVER|Serves other computers|A computer providing data or services to others.\nCLOUD|Computing you rent online|On-demand servers and storage over the internet.\nVIRUS|Attaches itself to other files|Malware that copies itself into files.\nRANSOMWARE|Locks files and demands payment|Malware that encrypts data for a ransom.\nWIFI|Wireless network access|Connects devices using radio waves.\nPATCH|Fix for bugs and security holes|An update that repairs a flaw.\nVPN|Private tunnel on a public network|Virtual Private Network, it encrypts your connection.\nCACHE|Remembers recent data for speed|Temporary storage that speeds up repeat requests.\nBIOS|Starts a PC before the OS|Firmware that checks hardware and loads the OS.\nETHERNET|Cabled network standard|Wired networking over cables.\nSPYWARE|Secretly watches you|Malware that gathers information without consent.\nTROJAN|Looks safe but is not|Malware disguised as legitimate software.\nBOTNET|Army of hijacked computers|Infected devices controlled remotely by attackers.\nHACKER|Finds ways into systems|Someone who exploits systems, for good or bad.\nKEYLOGGER|Records every keystroke|A tool that captures what you type.\nROOTKIT|Hides deep in the system|Malware that conceals itself with admin-level access.\nSPAM|Unwanted bulk messages|Junk messages sent in bulk.\nCOOKIE|Small file a website saves on you|Data a site stores in your browser.\nPROXY|Middleman for web requests|A server relaying requests between you and the internet.\nDOMAIN|Your website's name|A friendly address like example.com.\nHOSTING|Where websites live|A service that stores and serves websites.\nPROTOCOL|Agreed rules for communication|Rules devices follow to exchange data.\nPACKET|Small chunk of network data|A unit of data sent across a network.\nGATEWAY|Door between networks|A device connecting one network to others.\nSWITCH|Connects devices in a LAN|Forwards data to the right device on a local network.\nMODEM|Links you to your ISP|Converts signals to connect to the internet.\nLATENCY|Delay before data arrives|Time data takes to travel between two points.\nPING|Tests if a host responds|A command that checks reachability and response time.\nDNS|Phone book of the internet|Domain Name System, it turns names into IP addresses.\nDHCP|Hands out IP addresses|Protocol that assigns IP addresses automatically.\nSUBNET|Slice of a network|A smaller division of an IP network.\nHTTPS|Secure web protocol|Web traffic encrypted with TLS.\nBLUETOOTH|Short-range wireless|Wireless link for nearby devices.\nKERNEL|Core of the operating system|The OS part that manages hardware and processes.\nDRIVER|Lets the OS talk to hardware|Software that controls a hardware device.\nFIRMWARE|Software built into hardware|Low-level code stored on a device.\nREGISTRY|Windows settings database|Windows database of system and app settings.\nDEFRAGMENT|Tidy a hard disk's files|Reorganises scattered data on a disk.\nPARTITION|Split a drive into sections|A separate section of a storage drive.\nREBOOT|Turn it off and on again|Restarting a computer.\nRAM|Short-term memory|Fast memory for running programs.\nCPU|The brain of the computer|The processor that executes instructions.\nGPU|Handles graphics|A processor specialised for graphics and parallel work.\nMOTHERBOARD|Main circuit board|The board connecting CPU, memory and other parts.\nHEATSINK|Keeps chips cool|Metal part that draws heat from a processor.\nMONITOR|Shows the screen|A display output device.\nKEYBOARD|QWERTY input device|A device for typing input.\nPRINTER|Puts files on paper|A device that produces hard copies.\nSCANNER|Turns paper into digital|A device that digitises documents.\nUSB|Universal plug port|Universal Serial Bus, it connects peripherals.\nHDMI|Cable for video and sound|Digital audio and video connection.\nSSD|Fast storage, no moving parts|Solid State Drive that uses flash memory.\nRAID|Disks teamed up for safety|Combines drives for speed or redundancy.\nARCHIVE|Long-term file storage|Data kept for the long term.\nCOMPRESSION|Makes files smaller|Reducing file size.\nALGORITHM|Step-by-step recipe for a task|A set of steps to solve a problem.\nSOFTWARE|Programs, not parts|The programs and apps a computer runs.\nHARDWARE|The physical parts|The physical components of a computer.\nWINDOWS|Microsoft's operating system|Microsoft's OS family.\nLINUX|Open-source OS with a penguin|An open-source OS kernel and family.\nANDROID|Google's mobile OS|Google's mobile operating system.\nVIRTUALIZATION|Many machines on one|Running virtual computers on one physical host.\nHYPERVISOR|Manages virtual machines|Software that creates and runs VMs.\nCONTAINER|Packaged app with its needs|A lightweight bundle of an app and its dependencies.\nAPI|How apps talk to each other|Application Programming Interface.\nSCRIPT|Automates tasks|A code file that automates actions.\nPYTHON|Snake-named language|A popular, readable programming language.\nSQL|Language for databases|Structured Query Language.\nBUG|Flaw in code|An error causing unexpected behaviour.\nDEBUG|Hunt the flaw|Finding and fixing code errors.\nCOMPILER|Turns code into programs|Translates source code into machine code.\nFRONTEND|What users see|The part of an app users interact with.\nBACKEND|Server side of an app|Behind-the-scenes logic and data.\nDOWNLOAD|Pull a file down|Copying data from the internet to your device.\nUPLOAD|Push a file up|Sending data from your device online.\nSTREAMING|Watch without saving|Playing media as it arrives.\nPIXEL|Dot on a screen|The smallest unit of a digital image.\nTOKEN|Digital proof of identity|An item used to authenticate access.\nBIOMETRIC|Fingerprint or face login|Authentication using body traits.\nAUTHENTICATION|Proving who you are|Verifying identity before granting access.\nSANDBOX|Safe place to test|An isolated environment for running code safely.\nHONEYPOT|Decoy for attackers|A fake system that lures attackers so they can be studied.\nSPOOFING|Faking an identity|Disguising as a trusted source.\nDDOS|Flood a site with traffic|Distributed Denial of Service attack.\nHELPDESK|Where tickets get solved|The team that supports users with IT problems.\nUPTIME|Time a system stays up|Percentage of time a service is available.\nOUTAGE|Service goes down|A period when a service is unavailable.\nANTIVIRUS|Scans for malware|Software that detects and removes malware.\nQUARANTINE|Isolates suspicious files|A safe holding area for suspect files.\nMAINFRAME|Big iron for big business|A powerful computer for large-scale processing.");
+  var BANK=RAW.split("\n").map(function(l){return l.split("|")});
+  var CHEERS=["Awesome!","Legend!","Nailed it!","Brilliant!","Tech wizard!","Genius!","Boom!","Superstar!","Well played!","Byte-sized brilliance!","You rock!","Unstoppable!"];
+  var MAXMISS=6,CHANCES=2,KEY="ith_top3";
+  var $=function(id){return document.getElementById(id)};
+  var parts=document.querySelectorAll("#ith svg.hm .p"),hm=$("ith-hm"),act=$("ith-actor"),actT=null;
+  function hideActor(){clearTimeout(actT);act.hidden=true;act.className="";document.documentElement.style.overflowX=""}
+  function showActor(c){hideActor();act.hidden=false;void act.offsetWidth;act.className=c;
+    if(c==="win"&&!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.style.overflowX="hidden";actT=setTimeout(hideActor,5200)}}
+  var order=[],oi=0,entry,chance,miss,guessed,over,playing=false,score=0,streak=0,name="";
+
+  function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+  function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return []}}
+  function save(n,s){
+    var l=load(),f=false;
+    l.forEach(function(r){if(r.n.toLowerCase()===n.toLowerCase()){f=true;if(s>r.s)r.s=s}});
+    if(!f)l.push({n:n,s:s});
+    l.sort(function(a,b){return b.s-a.s});
+    try{localStorage.setItem(KEY,JSON.stringify(l.slice(0,3)))}catch(e){}
+    drawLB();
+  }
+  function drawLB(){
+    var ol=$("ith-lb"),l=load(),m=["🥇","🥈","🥉"];ol.innerHTML="";
+    if(!l.length){ol.innerHTML="<li>No scores yet. Be the first!</li>";return}
+    l.forEach(function(r,i){var li=document.createElement("li"),a=document.createElement("span"),b=document.createElement("b");
+      a.textContent=m[i]+" "+r.n;b.textContent=r.s;b.style.display="inline";li.appendChild(a);li.appendChild(b);ol.appendChild(li)});
+  }
+
+  function startGame(){
+    var v=$("ith-name").value.trim();
+    if(!v){$("ith-name").focus();$("ith-name").placeholder="Please type a name first";return}
+    name=v.slice(0,14);try{localStorage.setItem("ith_last",name)}catch(e){}
+    score=0;streak=0;playing=true;
+    $("ith-login").hidden=true;$("ith-game").hidden=false;
+    $("ith-who").textContent="Player: "+name;
+    order=shuffle(BANK.slice());oi=0;newWord();
+  }
+  function swap(){playing=false;hideActor();$("ith-game").hidden=true;$("ith-login").hidden=false;hm.classList.remove("shake");$("ith-name").focus()}
+
+  function newWord(){
+    if(oi>=order.length){order=shuffle(BANK.slice());oi=0}
+    entry=order[oi++];chance=1;startChance();
+  }
+  function startChance(){
+    miss=0;guessed={};over=false;hideActor();
+    parts.forEach(function(p){p.classList.remove("on")});
+    hm.classList.toggle("shake",chance===2);
+    hm.style.animationDuration="0.3s";
+    buildKeys();$("ith-next").hidden=true;$("ith-next").classList.remove("red");
+    var m=$("ith-msg");
+    if(chance===1){m.className="msg";m.textContent="Pick a letter to begin."}
+    else{m.className="msg warn";m.textContent="⚠️ Final chance for this word! He is fighting for his life. Don't let him go."}
+    $("ith-hint").innerHTML="<b>Hint:</b> "+entry[1];
+    render();
+  }
+  function buildKeys(){
+    var k=$("ith-keys");k.innerHTML="";
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(function(c){
+      var b=document.createElement("button");b.textContent=c;b.type="button";b.setAttribute("aria-label","Letter "+c);
+      b.dataset.k=c;b.onclick=function(){guess(c)};k.appendChild(b);
+    });
+  }
+  function won(){return entry[0].split("").every(function(c){return guessed[c]===true})}
+  function render(){
+    var w=$("ith-word");w.innerHTML="";
+    entry[0].split("").forEach(function(c){var d=document.createElement("div");d.className="ch";d.textContent=guessed[c]===true?c:"";w.appendChild(d)});
+    var t=$("ith-try");t.textContent=chance===2?"LAST CHANCE":"Chance 1 of 2";t.className="pill "+(chance===2?"last":"try");
+    $("ith-miss").textContent="Misses "+miss+"/"+MAXMISS;
+    $("ith-score").textContent="Score "+score+(streak>1?" 🔥"+streak:"");
+  }
+  function guess(c){
+    if(!playing||over||guessed[c]!==undefined)return;
+    var b=document.querySelector('#ith-keys [data-k="'+c+'"]');b.disabled=true;
+    if(entry[0].indexOf(c)>-1){guessed[c]=true;b.className="ok"}
+    else{guessed[c]=false;b.className="no";if(parts[miss])parts[miss].classList.add("on");miss++;
+      if(chance===2)hm.style.animationDuration=Math.max(0.1,0.3-miss*0.04)+"s"}
+    if(won())finish(true);else if(miss>=MAXMISS)finish(false);else render();
+  }
+  function finish(ok){
+    over=true;hm.classList.remove("shake");
+    document.querySelectorAll("#ith-keys button").forEach(function(b){b.disabled=true});
+    var m=$("ith-msg"),n=$("ith-next");
+    if(ok){
+      var pts=chance===1?20:10;score+=pts;streak++;save(name,score);
+      parts.forEach(function(p){p.classList.remove("on")});showActor("win");
+      m.className="msg win";
+      m.innerHTML="<b>Correct! +"+pts+" points.</b><br><b>"+entry[0]+"</b>: "+entry[2];
+      n.textContent="Next term";n.onclick=newWord;
+      render();celebrate();
+    }else if(chance<CHANCES){
+      m.className="msg warn";
+      m.textContent="⚠️ That one got away. You have 1 LAST CHANCE at this word, and he will shake the whole way. Ready?";
+      n.textContent="Face the last chance";n.classList.add("red");n.onclick=function(){chance++;startChance()};
+      render();
+    }else{
+      streak=0;parts.forEach(function(p){p.classList.remove("on")});showActor("dead");m.className="msg lose";
+      m.textContent="He didn't make it this time, and he's crying. Dry his tears and try a fresh term.";
+      n.textContent="Try a new term";n.onclick=newWord;
+      render();
+    }
+    n.hidden=false;n.focus();
+  }
+
+  // ----- Celebration: fireworks, cheers, walking hangman -----
+  var cv=$("ith-fx"),cx=cv.getContext("2d"),ps=[],raf=null,end=0;
+  function size(){cv.width=innerWidth;cv.height=innerHeight}
+  function burst(x,y){var h=Math.random()*360;for(var i=0;i<70;i++){var a=Math.random()*6.283,s=Math.random()*5+1.5;ps.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:1,h:h+Math.random()*40})}}
+  function celebrate(){
+    var calm=matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var box=$("ith-cheer");
+    shuffle(CHEERS.slice()).slice(0,5).forEach(function(t,i){
+      setTimeout(function(){var s=document.createElement("div");s.className="cheer";s.textContent=t;
+        s.style.left=(5+Math.random()*60)+"%";s.style.top=(12+Math.random()*60)+"%";
+        box.appendChild(s);setTimeout(function(){s.remove()},2500)},i*350);
+    });
+    if(calm)return;
+    setTimeout(function(){w.hidden=true},4600);
+    size();end=Date.now()+3200;var n=0;
+    (function launch(){burst(innerWidth*(0.15+Math.random()*0.7),innerHeight*(0.12+Math.random()*0.4));if(++n<7)setTimeout(launch,380)})();
+    if(!raf)loop();
+  }
+  function loop(){
+    cx.globalCompositeOperation="destination-out";cx.fillStyle="rgba(0,0,0,.22)";cx.fillRect(0,0,cv.width,cv.height);
+    cx.globalCompositeOperation="lighter";
+    ps=ps.filter(function(p){return p.l>0.02});
+    ps.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=0.06;p.vx*=0.985;p.l*=0.972;cx.fillStyle="hsla("+p.h+",100%,60%,"+p.l+")";cx.beginPath();cx.arc(p.x,p.y,2.4,0,6.283);cx.fill()});
+    if(ps.length||Date.now()<end)raf=requestAnimationFrame(loop);else{cx.clearRect(0,0,cv.width,cv.height);raf=null}
+  }
+  addEventListener("resize",size);
+
+  document.addEventListener("keydown",function(e){
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    var t=document.activeElement.tagName;
+    if(t==="INPUT"){if(e.key==="Enter"&&document.activeElement.id==="ith-name")startGame();return}
+    var c=e.key.toUpperCase();if(c.length===1&&c>="A"&&c<="Z")guess(c);
+  });
+  $("ith-start").onclick=startGame;$("ith-swap").onclick=swap;
+  try{$("ith-name").value=localStorage.getItem("ith_last")||""}catch(e){}
+  drawLB();
+})();
+</script>
+</section>
+<!-- ===== END ===== -->
+
+</body>
+</html>
